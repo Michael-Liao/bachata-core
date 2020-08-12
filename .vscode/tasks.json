@@ -1,0 +1,37 @@
+{
+    "tasks": [
+        {
+            "label": "make: build debug target",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "-C",
+                "${workspaceFolder}/build",
+                "-j8",
+                "chroma"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "npm: build:dev",
+            "type": "npm",
+            "script": "build:dev",
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "cmake-js build --debug --target=silhouette",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        }
+    ],
+    "version": "2.0.0"
+}

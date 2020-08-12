@@ -1,0 +1,23 @@
+{
+  "name": "bachata-core",
+  "version": "0.1.0",
+  "description": "native component for the bachata background removal app",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "cmake-js build --target=silhouette",
+    "build:dev": "cmake-js build --debug --target=silhouette",
+    "rebuild": "cmake-js rebuild --target=silhouette",
+    "rebuild:dev": "cmake-js rebuild --debug --target=silhouette",
+    "compile": "cmake-js compile --target=bachata",
+    "start": "node index.js"
+  },
+  "author": "Michael Liao",
+  "license": "MIT",
+  "dependencies": {
+    "node-addon-api": "^3.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.1.1"
+  }
+}
