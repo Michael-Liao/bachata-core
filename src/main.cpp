@@ -20,9 +20,6 @@ int main(int argc, char const *argv[])
     {
         std::cout<< "decode success" <<'\n';
     }
-    
-
-    std::cout<< buffer[20] << '\n';
 
     return 0;
 }

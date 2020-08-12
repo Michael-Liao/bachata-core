@@ -5,20 +5,20 @@ void ChromaRemove::loadImage(const std::string &path)
     origin_ = cv::imread(path, cv::IMREAD_COLOR);
 }
 
-void ChromaRemove::updateHue(const float &hue_lb, const float &hue_hb)
+void ChromaRemove::setHue(const int &hue_lb, const int &hue_ub)
 {
     hue_l_ = hue_lb;
-    hue_h_ = hue_hb;
+    hue_u_ = hue_ub;
 }
-void ChromaRemove::updateSaturation(const float &sat_lb, const float &sat_hb)
+void ChromaRemove::setSaturation(const int &sat_lb, const int &sat_ub)
 {
     sat_l_ = sat_lb;
-    sat_h_ = sat_hb;
+    sat_u_ = sat_ub;
 }
-void ChromaRemove::updateValue(const float &val_lb, const float &val_hb)
+void ChromaRemove::setValue(const int &val_lb, const int &val_ub)
 {
     val_l_ = val_lb;
-    val_h_ = val_hb;
+    val_u_ = val_ub;
 }
 
 cv::Mat ChromaRemove::origin() const
@@ -33,14 +33,7 @@ cv::Mat ChromaRemove::result()
     cv::Mat hsv_img;
     cv::cvtColor(origin_, hsv_img, cv::COLOR_BGR2HSV);
 
-    int hue_lb = hue_l_ * 179;
-    int hue_hb = hue_h_ * 179;
-    int sat_lb = sat_l_ * 255;
-    int sat_hb = sat_h_ * 255;
-    int val_lb = val_l_ * 255;
-    int val_hb = val_h_ * 255;
-
-    cv::inRange(hsv_img, cv::Scalar(hue_lb, sat_lb, val_lb), cv::Scalar(hue_hb, sat_hb, val_hb), mask);
+    cv::inRange(hsv_img, cv::Scalar(hue_l_, sat_l_, val_l_), cv::Scalar(hue_u_, sat_u_, val_u_), mask);
     cv::bitwise_not(mask, mask);
 
     // result_ = origin_.clone();

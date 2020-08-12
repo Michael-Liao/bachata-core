@@ -41,7 +41,7 @@ private:
     Napi::Value Result(const Napi::CallbackInfo &info);
 
     // New async setter
-    Napi::Value Setter(const Napi::CallbackInfo &info);
+    // Napi::Value Setter(const Napi::CallbackInfo &info);
     Napi::Value SetHue(const Napi::CallbackInfo &info);
     Napi::Value SetSaturation(const Napi::CallbackInfo &info);
     Napi::Value SetValue(const Napi::CallbackInfo &info);

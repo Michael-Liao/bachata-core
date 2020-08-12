@@ -2,13 +2,16 @@
 #include <vector>
 #include <iostream>
 
+// perfect demonstration of promises
+// https://github.com/nodejs/node-addon-examples/issues/85#issuecomment-583887294
+
 Napi::Object Bachata::Init(Napi::Env env, Napi::Object exports)
 {
     Napi::Function func = DefineClass(env, "Bachata", {
         InstanceMethod("loadImage", &Bachata::LoadImage),
         InstanceMethod("origin", &Bachata::Origin),
         InstanceMethod("result", &Bachata::Result),
-        InstanceMethod("set", &Bachata::Setter),
+        // InstanceMethod("set", &Bachata::Setter),
         InstanceMethod("setHue", &Bachata::SetHue),
         InstanceMethod("setSaturation", &Bachata::SetSaturation),
         InstanceMethod("setValue", &Bachata::SetValue),
@@ -82,7 +85,7 @@ Napi::Value Bachata::Result(const Napi::CallbackInfo &info)
 
     // convert to js type
     std::vector<uint8_t> buffer;
-    bool ok = cv::imencode(".png", result_, buffer);
+    bool ok = cv::imencode(".png", result_, buffer, {cv::IMWRITE_PNG_COMPRESSION, 9});
     // bool ok = cv::imencode(".png", mask, buffer);
 
     Napi::Buffer<uint8_t> js_buff = Napi::Buffer<uint8_t>::New(info.Env(), buffer.size());
@@ -99,49 +102,49 @@ Napi::Value Bachata::Result(const Napi::CallbackInfo &info)
     return js_buff;
 }
 
-Napi::Value Bachata::Setter(const Napi::CallbackInfo &info)
-{
-    auto deferred = Napi::Promise::Deferred::New(info.Env());
-    if (info.Length() != 3)
-    {
-        deferred.Reject(
-            Napi::TypeError::New(info.Env(), "require exactly 3 arguments").Value()
-        );
-    }
-    if (!info[0].IsString() || !info[1].IsNumber() || !info[2].IsNumber())
-    {
-        deferred.Reject(
-            Napi::TypeError::New(info.Env(), "unmatched types").Value()
-        );
-    }
+// Napi::Value Bachata::Setter(const Napi::CallbackInfo &info)
+// {
+//     auto deferred = Napi::Promise::Deferred::New(info.Env());
+//     if (info.Length() != 3)
+//     {
+//         deferred.Reject(
+//             Napi::TypeError::New(info.Env(), "require exactly 3 arguments").Value()
+//         );
+//     }
+//     if (!info[0].IsString() || !info[1].IsNumber() || !info[2].IsNumber())
+//     {
+//         deferred.Reject(
+//             Napi::TypeError::New(info.Env(), "unmatched types").Value()
+//         );
+//     }
 
-    std::string property_name = info[0].As<Napi::String>();
-    int lower_bound = info[1].As<Napi::Number>().Int32Value();
-    int upper_bound = info[2].As<Napi::Number>().Int32Value();
+//     std::string property_name = info[0].As<Napi::String>();
+//     int lower_bound = info[1].As<Napi::Number>().Int32Value();
+//     int upper_bound = info[2].As<Napi::Number>().Int32Value();
 
-    if (property_name.compare("hue"))
-    {
-        hue_l_ = lower_bound;
-        hue_u_ = upper_bound;
-    }
-    else if (property_name.compare("saturation"))
-    {
-        sat_l_ = lower_bound;
-        sat_u_ = upper_bound;
-    }
-    else if (property_name.compare("value"))
-    {
-        val_l_ = lower_bound;
-        val_u_ = upper_bound;
-    }
+//     if (property_name.compare("hue"))
+//     {
+//         hue_l_ = lower_bound;
+//         hue_u_ = upper_bound;
+//     }
+//     else if (property_name.compare("saturation"))
+//     {
+//         sat_l_ = lower_bound;
+//         sat_u_ = upper_bound;
+//     }
+//     else if (property_name.compare("value"))
+//     {
+//         val_l_ = lower_bound;
+//         val_u_ = upper_bound;
+//     }
 
-    Napi::Array arr = Napi::Array::New(info.Env(), 2);
-    arr[0u] = lower_bound;
-    arr[1u] = upper_bound;
-    deferred.Resolve(arr);
+//     Napi::Array arr = Napi::Array::New(info.Env(), 2);
+//     arr[0u] = lower_bound;
+//     arr[1u] = upper_bound;
+//     deferred.Resolve(arr);
     
-    return deferred.Promise();
-}
+//     return deferred.Promise();
+// }
 
 Napi::Value Bachata::SetHue(const Napi::CallbackInfo& info)
 {
@@ -151,7 +154,7 @@ Napi::Value Bachata::SetHue(const Napi::CallbackInfo& info)
     }
 
     int hue_lb = info[0].As<Napi::Number>().Int32Value();
-    int hue_ub = info[0].As<Napi::Number>().Int32Value();
+    int hue_ub = info[1].As<Napi::Number>().Int32Value();
 
     if (hue_lb > 179 || hue_ub > 179 || hue_lb > hue_ub)
     {
@@ -160,6 +163,8 @@ Napi::Value Bachata::SetHue(const Napi::CallbackInfo& info)
 
     hue_l_ = hue_lb;
     hue_u_ = hue_ub;
+
+    std::cout<<"hue boundaries: ["<< hue_l_ <<", "<< hue_u_ <<"]\n";
 
     // return dummy variable
     return Napi::Boolean::New(info.Env(), true);
@@ -173,7 +178,7 @@ Napi::Value Bachata::SetSaturation(const Napi::CallbackInfo& info)
     }
 
     int sat_lb = info[0].As<Napi::Number>().Int32Value();
-    int sat_ub = info[0].As<Napi::Number>().Int32Value();
+    int sat_ub = info[1].As<Napi::Number>().Int32Value();
 
     if (sat_lb > 255 || sat_ub > 255 || sat_lb > sat_ub)
     {
@@ -194,7 +199,7 @@ Napi::Value Bachata::SetValue(const Napi::CallbackInfo& info)
     }
 
     int val_lb = info[0].As<Napi::Number>().Int32Value();
-    int val_ub = info[0].As<Napi::Number>().Int32Value();
+    int val_ub = info[1].As<Napi::Number>().Int32Value();
 
     if (val_lb > 255 || val_ub > 255 || val_lb > val_ub)
     {

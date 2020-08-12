@@ -7,6 +7,24 @@
 
 class ChromaRemove
 {
+public:
+    ChromaRemove() = default;
+    ~ChromaRemove() = default;
+
+    void loadImage(const std::string &path);
+
+    void setHue(const int &hue_lb, const int &hue_hb);
+    void setSaturation(const int &sat_lb, const int &sat_hb);
+    void setValue(const int &val_lb, const int &val_hb);
+
+    cv::Mat origin() const;
+    cv::Mat result();
+    // shit we might need to return an array (or tuple but tuple is ugly)
+    // const int hue() const;
+    // const int saturation() const;
+    // const int value() const;
+
+private:
     cv::Mat origin_;
     cv::Mat result_;
 
@@ -15,27 +33,14 @@ class ChromaRemove
     // saturation: 0 - 255
     // value: 0 - 255
 
-    float hue_l_ = 0.29; // 0 - 179
-    float hue_h_ = 0.38; // 0 - 179
+    int hue_l_ = 52;
+    int hue_u_ = 68;
 
-    float sat_l_ = 0.8;
-    float sat_h_ = 1;
+    int sat_l_ = 200;
+    int sat_u_ = 255;
 
-    float val_l_ = 0.5;
-    float val_h_ = 1;
-
-public:
-    ChromaRemove() = default;
-    ~ChromaRemove() = default;
-
-    void loadImage(const std::string &path);
-
-    void updateHue(const float &hue_lb, const float &hue_hb);
-    void updateSaturation(const float &sat_lb, const float &sat_hb);
-    void updateValue(const float &val_lb, const float &val_hb);
-
-    cv::Mat origin() const;
-    cv::Mat result();
+    int val_l_ = 127;
+    int val_u_ = 255;
 };
 
 #endif
