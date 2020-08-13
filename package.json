@@ -21,5 +21,10 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "mocha": "^8.1.1"
+  },
+  "cmake-js": {
+    "runtime": "electron",
+    "runtimeVersion": "9.1.1",
+    "arch": "x64"
   }
 }

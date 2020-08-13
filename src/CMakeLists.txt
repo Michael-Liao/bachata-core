@@ -21,6 +21,7 @@ target_link_libraries(chroma
 
 add_library(bachata SHARED
     "bachata.cpp"
+    "chromaremove.cpp"
     ${CMAKE_JS_SRC})
 
 # normally a shared library will be compiled into a name with prefix `lib` and suffix `.so`
@@ -30,9 +31,22 @@ set_target_properties(bachata PROPERTIES
     PREFIX ""
     SUFFIX ".node")
 
+if(DEFINED ${CMAKE_JS_INC})
+# this block will be executed by cmake-js because -DCMAKE_JS_INC is declared
+# for more information run `cmake-js print-configure`
 target_include_directories(bachata BEFORE
     PRIVATE ${CMAKE_JS_INC}
     PRIVATE ${NODE_ADDON_API_DIR})
+
+else()
+
+# this is just to help vscode configure intellisense better
+# this is currently defaulted to use the electron runtime
+target_include_directories(bachata BEFORE
+    PRIVATE "/home/michael/.cmake-js/electron-x64/v9.1.1/include/node"
+    PRIVATE ${NODE_ADDON_API_DIR})
+
+endif()
 
 target_link_libraries(bachata
     ${OpenCV_LIBS}
